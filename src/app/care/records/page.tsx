@@ -26,34 +26,58 @@ function CareRecordsPage() {
   const params = useSearchParams();
   const [activeTab, setActiveTab] = useState<CareType>('water');
   const [plant, setPlant] = useState<(Plant & { species: PlantSpecies }) | null>(null);
+  const [allPlants, setAllPlants] = useState<Array<Plant & { species: PlantSpecies }>>([]);
   const [records, setRecords] = useState<CareRecord[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newNote, setNewNote] = useState('');
+
+  const loadRecordsForPlant = async (targetPlant: Plant) => {
+    const { db } = await import('@/lib/db');
+    const species = getPlantSpeciesById(targetPlant.speciesId);
+    if (species) {
+      setPlant({ ...targetPlant, species });
+    }
+    const careRecords = await db.careRecords
+      .where('plantId')
+      .equals(targetPlant.id)
+      .reverse()
+      .sortBy('date');
+    setRecords(careRecords);
+  };
+
+  const switchPlant = (plantId: string) => {
+    const target = allPlants.find((p) => p.id === plantId);
+    if (target) {
+      loadRecordsForPlant(target);
+    }
+  };
 
   useEffect(() => {
     async function load() {
       const { db } = await import('@/lib/db');
       const plantId = params.get('plantId');
+      const plants = await db.plants.toArray();
+
+      // Build all plants with species info
+      const plantsWithSpecies = plants
+        .map((p) => {
+          const species = getPlantSpeciesById(p.speciesId);
+          if (!species) return null;
+          return { ...p, species };
+        })
+        .filter((p): p is Plant & { species: PlantSpecies } => p !== null);
+      setAllPlants(plantsWithSpecies);
 
       let targetPlant: Plant | undefined;
       if (plantId) {
-        targetPlant = await db.plants.get(plantId);
-      } else {
-        const allPlants = await db.plants.toArray();
-        targetPlant = allPlants[0];
+        targetPlant = plants.find((p) => p.id === plantId);
+      }
+      if (!targetPlant) {
+        targetPlant = plants[0];
       }
 
       if (targetPlant) {
-        const species = getPlantSpeciesById(targetPlant.speciesId);
-        if (species) {
-          setPlant({ ...targetPlant, species });
-        }
-        const careRecords = await db.careRecords
-          .where('plantId')
-          .equals(targetPlant.id)
-          .reverse()
-          .sortBy('date');
-        setRecords(careRecords);
+        await loadRecordsForPlant(targetPlant);
       }
     }
     load();
@@ -104,6 +128,25 @@ function CareRecordsPage() {
               <p className="font-semibold text-slate-800">{plant.species.name}</p>
               <p className="text-xs text-emerald-600">잘 자라고 있어요 ✓</p>
             </div>
+          </div>
+        )}
+
+        {/* Multi-plant switcher */}
+        {allPlants.length > 1 && (
+          <div className="mt-4 flex gap-2">
+            {allPlants.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => switchPlant(p.id)}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  plant?.id === p.id
+                    ? 'bg-emerald-100 text-emerald-700'
+                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                }`}
+              >
+                🌿 {p.species.name}
+              </button>
+            ))}
           </div>
         )}
 
