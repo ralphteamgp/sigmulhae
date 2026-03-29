@@ -8,13 +8,13 @@ let anthropicClient: Anthropic | null = null;
 
 /** Return the singleton Anthropic SDK client for server-side usage. */
 export function getAnthropicClient() {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-
-  if (!apiKey) {
-    throw new AIClientError('ANTHROPIC_API_KEY is not configured for the Claude client');
-  }
-
   if (!anthropicClient) {
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+
+    if (!apiKey) {
+      throw new AIClientError('ANTHROPIC_API_KEY is not configured for the Claude client');
+    }
+
     anthropicClient = new Anthropic({ apiKey });
   }
 

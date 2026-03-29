@@ -43,9 +43,9 @@ export default function AnalyzePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query }),
       });
-      if (res.ok) {
-        const data = await res.json();
-        setCandidates(data.candidates ?? []);
+      const data = await res.json();
+      if (data.candidates) {
+        setCandidates(data.candidates);
       }
     } catch { /* ignore */ }
     setLoadingAddress(false);

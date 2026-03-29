@@ -42,9 +42,10 @@ export async function POST(request: NextRequest) {
         prompt: fillTemplate(ADDRESS_PARSE_USER, { query }),
         systemPrompt: ADDRESS_PARSE_SYSTEM,
       });
-    } catch {
+    } catch (aiErr) {
+      console.error('AI address parse error:', aiErr);
       return NextResponse.json(
-        { error: '주소 분석에 실패했어요. 다시 시도해주세요.', code: 'AI_SERVICE_ERROR' },
+        { error: '주소 분석에 실패했어요. 다시 시도해주세요.', code: 'AI_SERVICE_ERROR', detail: String(aiErr) },
         { status: 500 }
       );
     }
