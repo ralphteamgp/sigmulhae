@@ -13,6 +13,41 @@ interface PlacedPlant {
   x: number;
   y: number;
   zone: 'good' | 'warning';
+  zoneName: string;
+}
+
+function getZoneName(grade: string): string {
+  if (grade === 'strong') return '직사광 구역';
+  if (grade === 'medium') return '간접광 구역';
+  return '음지 구역';
+}
+
+function matchPlantToZone(
+  sunlightNeed: string,
+  zones: Space['sunlightZones'],
+): { x: number; y: number; zone: 'good' | 'warning'; zoneName: string } {
+  // Match plant to best zone based on light needs
+  const gradeMap: Record<string, string[]> = {
+    strong: ['strong', 'medium', 'weak'],
+    medium: ['medium', 'strong', 'weak'],
+    weak: ['weak', 'medium', 'strong'],
+  };
+
+  const preferred = gradeMap[sunlightNeed] ?? ['medium', 'strong', 'weak'];
+
+  for (const grade of preferred) {
+    const zone = zones.find((z) => z.grade === grade);
+    if (zone) {
+      return {
+        x: zone.area.x + zone.area.width / 2,
+        y: zone.area.y + zone.area.height / 2,
+        zone: grade === 'weak' && sunlightNeed !== 'weak' ? 'warning' : 'good',
+        zoneName: getZoneName(grade),
+      };
+    }
+  }
+
+  return { x: 30, y: 30, zone: 'warning', zoneName: '미배정' };
 }
 
 export default function PlacementPage() {
@@ -32,16 +67,34 @@ export default function PlacementPage() {
       const raw = sessionStorage.getItem('selected_plants');
       if (raw) {
         const ids: string[] = JSON.parse(raw);
+        const currentSpace = spaces.length > 0 ? spaces[0] : null;
+        const zones = currentSpace?.sunlightZones ?? [];
+
         const plants: PlacedPlant[] = ids
           .map((id, i) => {
             const species = getPlantSpeciesById(id);
             if (!species) return null;
+
+            if (zones.length > 0) {
+              const match = matchPlantToZone(species.sunlightNeed, zones);
+              // Offset each plant slightly within its zone to avoid overlap
+              return {
+                speciesId: id,
+                species,
+                x: Math.min(95, Math.max(5, match.x + (i % 3) * 8 - 8)),
+                y: Math.min(95, Math.max(5, match.y + Math.floor(i / 3) * 8)),
+                zone: match.zone,
+                zoneName: match.zoneName,
+              };
+            }
+
             return {
               speciesId: id,
               species,
               x: 20 + (i % 3) * 30,
               y: 20 + Math.floor(i / 3) * 30,
               zone: species.sunlightNeed === 'weak' ? 'warning' as const : 'good' as const,
+              zoneName: species.sunlightNeed === 'weak' ? '음지 구역' : '간접광 구역',
             };
           })
           .filter((p): p is PlacedPlant => p !== null);
@@ -141,9 +194,9 @@ export default function PlacementPage() {
               {/* Analysis-based layout */}
               {hasFloorplan ? (
                 <img
-                  src={space!.floorplanImage}
+                  src={`data:image/png;base64,${space!.floorplanImage}`}
                   alt="평면도"
-                  className="absolute inset-0 h-full w-full rounded-xl object-contain opacity-30"
+                  className="absolute inset-0 h-full w-full rounded-xl object-contain opacity-60"
                 />
               ) : hasZones ? (
                 /* Render sunlight zones from analysis */
@@ -206,9 +259,11 @@ export default function PlacementPage() {
             {swept && placed.length > 0 && hasZones && (
               <div className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">
                 <strong>✦ 추천 배치</strong> — 채광 분석 기반
-                <p className="mt-1 text-xs text-slate-500">
-                  {placed[0]?.species.name}은(는) {space!.sunlightZones[0]?.grade === 'strong' ? '직사광 구역' : '간접광 구역'}에 배치하는 것을 추천합니다.
-                </p>
+                {placed.map((p, i) => (
+                  <p key={i} className="mt-1 text-xs text-slate-500">
+                    {p.species.name}은(는) <strong>{p.zoneName}</strong>에 배치하는 것을 추천합니다.
+                  </p>
+                ))}
               </div>
             )}
 
@@ -248,7 +303,7 @@ export default function PlacementPage() {
                     <div>
                       <p className="text-sm font-medium text-slate-700">{p.species.name}</p>
                       <p className="text-xs text-slate-400">
-                        위치: ({Math.round(p.x)}%, {Math.round(p.y)}%)
+                        {p.zoneName} · ({Math.round(p.x)}%, {Math.round(p.y)}%)
                       </p>
                     </div>
                   </div>
