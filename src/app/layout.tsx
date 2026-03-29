@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: '식물식물해',
-  description: '일조량 기반 식물 추천을 위한 PlantFit MVP workspace',
+  description: 'AI 기반 실내 식물 추천 서비스 — 일조량 분석으로 우리 집에 딱 맞는 식물을 찾아드려요',
 };
 
 export default function RootLayout({
@@ -13,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body className="min-h-screen antialiased">{children}</body>
     </html>
   );
 }

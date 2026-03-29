@@ -28,6 +28,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (query.trim().length < 2) {
+      return NextResponse.json(
+        { error: '주소는 두 글자 이상 입력해주세요', code: 'EMPTY_QUERY' },
+        { status: 400 }
+      );
+    }
+
     // Claude API로 주소 정제
     let aiResult: AIAddressResult;
     try {

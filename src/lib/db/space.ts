@@ -25,7 +25,11 @@ export async function updateSpace(
   id: string,
   changes: Partial<Space>
 ): Promise<void> {
-  await db.spaces.update(id, changes);
+  const updated = await db.spaces.update(id, changes);
+
+  if (updated === 0) {
+    throw new Error('Space not found');
+  }
 }
 
 /** 공간 삭제 + 연관 식물/케어기록 cascade 삭제 */

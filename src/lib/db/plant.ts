@@ -26,7 +26,11 @@ export async function updatePlant(
   id: string,
   changes: Partial<Plant>
 ): Promise<void> {
-  await db.plants.update(id, changes);
+  const updated = await db.plants.update(id, changes);
+
+  if (updated === 0) {
+    throw new Error('Plant not found');
+  }
 }
 
 /** 식물 삭제 + 연관 케어기록 cascade 삭제 */

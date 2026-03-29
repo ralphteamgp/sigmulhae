@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 호갱노노 크롤링 시도
-    const crawlResult = await crawlFloorplan(address, dong, ho);
+    const crawlResult = await crawlFloorplan(address);
 
     let response: FloorplanAnalyzeResponse;
 

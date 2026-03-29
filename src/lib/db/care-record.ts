@@ -7,7 +7,12 @@ export async function createCareRecord(
   data: Omit<CareRecord, 'id'>
 ): Promise<string> {
   const id = crypto.randomUUID();
-  await db.careRecords.add({ ...data, id });
+
+  await db.transaction('rw', [db.careRecords, db.plants], async () => {
+    await db.careRecords.add({ ...data, id });
+    await db.plants.update(data.plantId, { lastCaredAt: data.date });
+  });
+
   return id;
 }
 
@@ -15,11 +20,12 @@ export async function createCareRecord(
 export async function getCareRecordsByPlant(
   plantId: string
 ): Promise<CareRecord[]> {
-  return db.careRecords
+  const records = await db.careRecords
     .where('plantId')
     .equals(plantId)
-    .reverse()
     .sortBy('date');
+
+  return records.reverse();
 }
 
 /** 가장 최근 케어 기록 */
