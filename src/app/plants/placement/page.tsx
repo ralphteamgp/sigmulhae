@@ -1,7 +1,7 @@
 'use client';
 
 import { TopNav } from '@/components/ui/top-nav';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import type { PlantSpecies } from '@/types/plant';
 import type { Space } from '@/types/space';
@@ -20,15 +20,15 @@ export default function PlacementPage() {
   const [space, setSpace] = useState<Space | null>(null);
   const [placed, setPlaced] = useState<PlacedPlant[]>([]);
   const [swept, setSwept] = useState(false);
+  const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function load() {
-      // Load space from IndexedDB
       const { db } = await import('@/lib/db');
       const spaces = await db.spaces.orderBy('createdAt').reverse().toArray();
       if (spaces.length > 0) setSpace(spaces[0]);
 
-      // Load selected plants
       const raw = sessionStorage.getItem('selected_plants');
       if (raw) {
         const ids: string[] = JSON.parse(raw);
@@ -50,7 +50,6 @@ export default function PlacementPage() {
     }
     load();
 
-    // Trigger sweep animation
     const timer = setTimeout(() => setSwept(true), 100);
     return () => clearTimeout(timer);
   }, []);
@@ -59,8 +58,36 @@ export default function PlacementPage() {
     setPlaced((prev) => prev.filter((_, i) => i !== idx));
   };
 
+  // Drag handlers
+  const handleDragStart = useCallback((idx: number) => {
+    setDraggingIdx(idx);
+  }, []);
+
+  const handleDragMove = useCallback((e: React.MouseEvent | React.TouchEvent) => {
+    if (draggingIdx === null || !canvasRef.current) return;
+
+    const rect = canvasRef.current.getBoundingClientRect();
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+    const xPct = ((clientX - rect.left) / rect.width) * 100;
+    const yPct = ((clientY - rect.top) / rect.height) * 100;
+
+    const clampedX = Math.max(2, Math.min(95, xPct));
+    const clampedY = Math.max(2, Math.min(95, yPct));
+
+    setPlaced((prev) =>
+      prev.map((p, i) =>
+        i === draggingIdx ? { ...p, x: clampedX, y: clampedY } : p,
+      ),
+    );
+  }, [draggingIdx]);
+
+  const handleDragEnd = useCallback(() => {
+    setDraggingIdx(null);
+  }, []);
+
   const handleCareStart = async () => {
-    // Register plants in DB
     const { createPlant } = await import('@/lib/db/plant');
     const spaceId = space?.id ?? 'default';
     for (const p of placed) {
@@ -72,6 +99,19 @@ export default function PlacementPage() {
     }
     router.push('/care');
   };
+
+  // Determine zone color based on analysis data
+  const getZoneStyle = (zone: { grade: string; area: { x: number; y: number; width: number; height: number } }) => {
+    const gradeColors: Record<string, string> = {
+      strong: 'bg-amber-100/60 border-amber-300',
+      medium: 'bg-emerald-100/60 border-emerald-300',
+      weak: 'bg-slate-100/60 border-slate-300',
+    };
+    return gradeColors[zone.grade] ?? 'bg-slate-100/60 border-slate-300';
+  };
+
+  const hasFloorplan = space?.floorplanImage;
+  const hasZones = space?.sunlightZones && space.sunlightZones.length > 0;
 
   return (
     <>
@@ -85,40 +125,94 @@ export default function PlacementPage() {
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
           {/* 2D Floorplan */}
           <div className="relative overflow-hidden rounded-2xl border border-lime-200 bg-white p-4">
-            {/* Sweep animation */}
             {!swept && (
               <div className="animate-sweep absolute inset-0 z-10 bg-gradient-to-r from-amber-200/60 via-yellow-100/40 to-transparent" />
             )}
 
-            <div className="relative h-80 rounded-xl bg-gradient-to-br from-lime-50 to-white">
-              {/* Room layout */}
-              <div className="absolute left-4 top-4 h-48 w-48 rounded-lg border-2 border-slate-300 bg-white/50 p-2">
-                <span className="text-xs text-slate-400">거실</span>
-              </div>
-              <div className="absolute right-4 top-4 h-24 w-24 rounded-lg border-2 border-slate-300 bg-white/50 p-2">
-                <span className="text-xs text-slate-400">침실</span>
-              </div>
-              <div className="absolute bottom-4 right-4 h-20 w-24 rounded-lg border-2 border-slate-300 bg-white/50 p-2">
-                <span className="text-xs text-slate-400">주방</span>
-              </div>
+            <div
+              ref={canvasRef}
+              className="relative h-80 select-none rounded-xl bg-gradient-to-br from-lime-50 to-white"
+              onMouseMove={handleDragMove}
+              onMouseUp={handleDragEnd}
+              onMouseLeave={handleDragEnd}
+              onTouchMove={handleDragMove}
+              onTouchEnd={handleDragEnd}
+            >
+              {/* Analysis-based layout */}
+              {hasFloorplan ? (
+                <img
+                  src={space!.floorplanImage}
+                  alt="평면도"
+                  className="absolute inset-0 h-full w-full rounded-xl object-contain opacity-30"
+                />
+              ) : hasZones ? (
+                /* Render sunlight zones from analysis */
+                space!.sunlightZones.map((zone) => (
+                  <div
+                    key={zone.id}
+                    className={`absolute rounded-lg border-2 p-2 ${getZoneStyle(zone)}`}
+                    style={{
+                      left: `${zone.area.x}%`,
+                      top: `${zone.area.y}%`,
+                      width: `${Math.min(zone.area.width, 100 - zone.area.x)}%`,
+                      height: `${Math.min(zone.area.height, 100 - zone.area.y)}%`,
+                    }}
+                  >
+                    <span className="text-xs text-slate-500">
+                      {zone.grade === 'strong' ? '☀️ 직사광' : zone.grade === 'medium' ? '🌤 간접광' : '🌙 음지'}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                /* Fallback: generic layout when no analysis */
+                <>
+                  <div className="absolute left-4 top-4 h-48 w-48 rounded-lg border-2 border-slate-300 bg-white/50 p-2">
+                    <span className="text-xs text-slate-400">거실</span>
+                  </div>
+                  <div className="absolute right-4 top-4 h-24 w-24 rounded-lg border-2 border-slate-300 bg-white/50 p-2">
+                    <span className="text-xs text-slate-400">침실</span>
+                  </div>
+                  <div className="absolute bottom-4 right-4 h-20 w-24 rounded-lg border-2 border-slate-300 bg-white/50 p-2">
+                    <span className="text-xs text-slate-400">주방</span>
+                  </div>
+                </>
+              )}
 
-              {/* Plant pins */}
+              {/* Draggable plant pins */}
               {placed.map((p, i) => (
                 <div
                   key={i}
-                  className={`absolute flex h-10 w-10 items-center justify-center rounded-full border-2 text-lg ${
+                  className={`absolute flex h-10 w-10 cursor-grab items-center justify-center rounded-full border-2 text-lg ${
+                    draggingIdx === i ? 'z-20 scale-110 shadow-lg' : 'z-10'
+                  } ${
                     p.zone === 'good'
                       ? 'border-emerald-500 bg-emerald-50'
                       : 'border-red-400 bg-red-50'
                   }`}
-                  style={{ left: `${p.x}%`, top: `${p.y}%` }}
+                  style={{
+                    left: `${p.x}%`,
+                    top: `${p.y}%`,
+                    transform: 'translate(-50%, -50%)',
+                    cursor: draggingIdx === i ? 'grabbing' : 'grab',
+                  }}
+                  onMouseDown={() => handleDragStart(i)}
+                  onTouchStart={() => handleDragStart(i)}
                 >
                   🌿
                 </div>
               ))}
             </div>
 
-            {swept && placed.length > 0 && (
+            {swept && placed.length > 0 && hasZones && (
+              <div className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">
+                <strong>✦ 추천 배치</strong> — 채광 분석 기반
+                <p className="mt-1 text-xs text-slate-500">
+                  {placed[0]?.species.name}은(는) {space!.sunlightZones[0]?.grade === 'strong' ? '직사광 구역' : '간접광 구역'}에 배치하는 것을 추천합니다.
+                </p>
+              </div>
+            )}
+
+            {swept && placed.length > 0 && !hasZones && (
               <div className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-700">
                 <strong>✦ Best Spot</strong> — 거실 창가
                 <p className="mt-1 text-xs text-slate-500">
@@ -153,7 +247,9 @@ export default function PlacementPage() {
                     <span className="text-xl">🌿</span>
                     <div>
                       <p className="text-sm font-medium text-slate-700">{p.species.name}</p>
-                      <p className="text-xs text-slate-400">거실</p>
+                      <p className="text-xs text-slate-400">
+                        위치: ({Math.round(p.x)}%, {Math.round(p.y)}%)
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
