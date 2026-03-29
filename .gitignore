@@ -1,18 +1,8 @@
-# Local Ralph runtime files
-.ralph/autonomous-resume-prompt.md
-.ralph/smoke-test-prompt.md
-.ralph/state.json
-.ralph/progress.md
-.ralph/failures.md
-.ralph/heartbeat.txt
-.ralph/runner.pid
-.ralph/watchdog.log
-.ralph/launchd.out.log
-.ralph/launchd.err.log
-.ralph/cron.log
-.ralph/logs/
-
-# Reviewed separately before commit
-scripts/ralph-run.sh
-scripts/ralph-watchdog.sh
-ops/launchd/*.plist
+node_modules/
+.next/
+coverage/
+playwright-report/
+test-results/
+.env.local
+pnpm-debug.log*
+*.tsbuildinfo
