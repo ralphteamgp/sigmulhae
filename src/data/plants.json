@@ -1,0 +1,252 @@
+[
+  {
+    "id": "monstera",
+    "name": "몬스테라",
+    "scientificName": "Monstera deliciosa",
+    "sunlightNeed": "medium",
+    "difficulty": "easy",
+    "waterIntervalDays": 7,
+    "effects": ["공기정화", "인테리어 포인트"],
+    "description": "넓은 잎에 독특한 구멍이 있어 인테리어 포인트로 인기�� 높고 공기정화 능력도 뛰어납니다."
+  },
+  {
+    "id": "pothos",
+    "name": "스킨답서스",
+    "scientificName": "Epipremnum aureum",
+    "sunlightNeed": "medium",
+    "difficulty": "easy",
+    "waterIntervalDays": 7,
+    "effects": ["공기정화", "초보 추천"],
+    "description": "반양지에서도 잘 자라며 공기정화 능력이 뛰어나 초보자에게 추천하는 덩굴 식물입니다."
+  },
+  {
+    "id": "sansevieria",
+    "name": "산세비에리아",
+    "scientificName": "Sansevieria trifasciata",
+    "sunlightNeed": "weak",
+    "difficulty": "easy",
+    "waterIntervalDays": 21,
+    "effects": ["공기정화", "초보 추천"],
+    "description": "건조에 매우 강하고 음지에서도 잘 자라며 밤에도 산소를 방출합니다."
+  },
+  {
+    "id": "rubber-plant",
+    "name": "고무나무",
+    "scientificName": "Ficus elastica",
+    "sunlightNeed": "medium",
+    "difficulty": "easy",
+    "waterIntervalDays": 10,
+    "effects": ["공기정화", "인테리어 포인트"],
+    "description": "두껍고 광택 있는 잎이 인테리어 효과가 좋고 관리가 쉬워 인기가 많습니다."
+  },
+  {
+    "id": "peace-lily",
+    "name": "스파티필럼",
+    "scientificName": "Spathiphyllum wallisii",
+    "sunlightNeed": "weak",
+    "difficulty": "easy",
+    "waterIntervalDays": 5,
+    "effects": ["공기정화", "가습", "초보 추천"],
+    "description": "음지에서도 잘 자라며 흰 꽃이 피고 공기정화 효과�� NASA 선정 1위입니다."
+  },
+  {
+    "id": "areca-palm",
+    "name": "아레카야자",
+    "scientificName": "Dypsis lutescens",
+    "sunlightNeed": "medium",
+    "difficulty": "medium",
+    "waterIntervalDays": 5,
+    "effects": ["가습", "공기정화", "인테리어 포인트"],
+    "description": "천연 가습기로 불리며 열대 분위기�� 연출하는 인테리어 효과가 뛰어납니다."
+  },
+  {
+    "id": "pachira",
+    "name": "파키라",
+    "scientificName": "Pachira aquatica",
+    "sunlightNeed": "medium",
+    "difficulty": "easy",
+    "waterIntervalDays": 10,
+    "effects": ["공기정화", "인테리어 포인트", "초보 추천"],
+    "description": "꼬아진 줄기가 특징적이며 관리가 쉽고 개업 선물로 인기가 많습니다."
+  },
+  {
+    "id": "dracaena",
+    "name": "행운목",
+    "scientificName": "Dracaena fragrans",
+    "sunlightNeed": "medium",
+    "difficulty": "easy",
+    "waterIntervalDays": 10,
+    "effects": ["공기정화", "초보 추천"],
+    "description": "��경재배도 가능하며 관리가 쉽고 공기정화 능력이 뛰어납니다."
+  },
+  {
+    "id": "cactus",
+    "name": "선인장",
+    "scientificName": "Cactaceae",
+    "sunlightNeed": "strong",
+    "difficulty": "easy",
+    "waterIntervalDays": 30,
+    "effects": ["초보 추천", "인테리어 포인트"],
+    "description": "직사광선을 ���아하고 물주기가 거의 필요 없어 초보자에게 최적입니다."
+  },
+  {
+    "id": "echeveria",
+    "name": "에케베리아",
+    "scientificName": "Echeveria elegans",
+    "sunlightNeed": "strong",
+    "difficulty": "easy",
+    "waterIntervalDays": 14,
+    "effects": ["인테리어 포인트", "초보 추천"],
+    "description": "장미 모양의 로제트 형태가 아름다운 다육식물로 빛을 충분히 주면 색이 더 선명해집니다."
+  },
+  {
+    "id": "geranium",
+    "name": "제라늄",
+    "scientificName": "Pelargonium × hortorum",
+    "sunlightNeed": "strong",
+    "difficulty": "medium",
+    "waterIntervalDays": 5,
+    "effects": ["향기", "인테리어 포인트"],
+    "description": "다양한 색상의 꽃이 피며 특유의 향기가 있어 창가에서 키우기 좋습니다."
+  },
+  {
+    "id": "table-palm",
+    "name": "테이블야자",
+    "scientificName": "Chamaedorea elegans",
+    "sunlightNeed": "weak",
+    "difficulty": "easy",
+    "waterIntervalDays": 7,
+    "effects": ["공기정화", "가습", "반려동물 안전"],
+    "description": "음지에서도 잘 자라며 반려동물에게 무독성이고 가습 효과가 있습니다."
+  },
+  {
+    "id": "boston-fern",
+    "name": "보스턴 고사리",
+    "scientificName": "Nephrolepis exaltata",
+    "sunlightNeed": "weak",
+    "difficulty": "medium",
+    "waterIntervalDays": 3,
+    "effects": ["가습", "공기정화", "반려동물 안전"],
+    "description": "풍성한 ��이 행잉 화분에 어울리며 가습 효과가 뛰어나지만 관리에 신경을 써야 합니다."
+  },
+  {
+    "id": "calathea",
+    "name": "칼라데아",
+    "scientificName": "Calathea orbifolia",
+    "sunlightNeed": "weak",
+    "difficulty": "hard",
+    "waterIntervalDays": 4,
+    "effects": ["인테리어 포인트", "반려동물 안전"],
+    "description": "줄무늬 잎이 아름답지만 습도와 온도에 ��감해 경험자에게 ��천합니다."
+  },
+  {
+    "id": "fiddle-leaf-fig",
+    "name": "떡갈고무나무",
+    "scientificName": "Ficus lyrata",
+    "sunlightNeed": "medium",
+    "difficulty": "medium",
+    "waterIntervalDays": 7,
+    "effects": ["인테리어 포인트"],
+    "description": "큰 바이올린 모양 잎이 인테리어 효과가 뛰어나 카페에서 많이 볼 수 있습니다."
+  },
+  {
+    "id": "jade-plant",
+    "name": "염좌/크라술라",
+    "scientificName": "Crassula ovata",
+    "sunlightNeed": "strong",
+    "difficulty": "easy",
+    "waterIntervalDays": 14,
+    "effects": ["초보 추천", "인테리어 포인트"],
+    "description": "두꺼운 다육질 잎이 특징으로 건조에 강하고 햇빛만 충분하면 ��� 자랍니다."
+  },
+  {
+    "id": "aloe-vera",
+    "name": "알로에 베라",
+    "scientificName": "Aloe vera",
+    "sunlightNeed": "strong",
+    "difficulty": "easy",
+    "waterIntervalDays": 14,
+    "effects": ["공기정화", "초보 추천"],
+    "description": "직사광선을 좋아하며 건조에 강하고 젤을 활용할 수 있는 실용적인 식물입니다."
+  },
+  {
+    "id": "bird-of-paradise",
+    "name": "극락조",
+    "scientificName": "Strelitzia reginae",
+    "sunlightNeed": "strong",
+    "difficulty": "medium",
+    "waterIntervalDays": 7,
+    "effects": ["인테리어 포인트"],
+    "description": "이국적인 큰 ���이 트렌디한 인테리어 효과를 주며 충분한 빛이 필요합니다."
+  },
+  {
+    "id": "philodendron",
+    "name": "필로덴드론",
+    "scientificName": "Philodendron hederaceum",
+    "sunlightNeed": "medium",
+    "difficulty": "easy",
+    "waterIntervalDays": 7,
+    "effects": ["공기정화", "초보 추천"],
+    "description": "하트 모양 잎이 매력적이며 덩굴��� 자��� 행잉이나 선반 위에 두기 좋습니다."
+  },
+  {
+    "id": "rosemary",
+    "name": "로즈마리",
+    "scientificName": "Salvia rosmarinus",
+    "sunlightNeed": "strong",
+    "difficulty": "medium",
+    "waterIntervalDays": 5,
+    "effects": ["향기", "열매"],
+    "description": "허브로 요리에 활용 가능하며 상쾌한 향기가 좋고 직사광��이 필요합니다."
+  },
+  {
+    "id": "orchid",
+    "name": "호접란",
+    "scientificName": "Phalaenopsis aphrodite",
+    "sunlightNeed": "medium",
+    "difficulty": "hard",
+    "waterIntervalDays": 7,
+    "effects": ["인테리어 포인트", "향기"],
+    "description": "우아한 꽃이 오래 피지만 물주기와 빛 관리에 세심한 주의가 필요합니다."
+  },
+  {
+    "id": "zamioculcas",
+    "name": "금전수",
+    "scientificName": "Zamioculcas zamiifolia",
+    "sunlightNeed": "weak",
+    "difficulty": "easy",
+    "waterIntervalDays": 21,
+    "effects": ["공기정화", "초보 추천"],
+    "description": "광택 나는 잎이 매력적이며 음지와 건조에 강해 방치해도 잘 자랍니다."
+  },
+  {
+    "id": "lavender",
+    "name": "라벤더",
+    "scientificName": "Lavandula angustifolia",
+    "sunlightNeed": "strong",
+    "difficulty": "hard",
+    "waterIntervalDays": 7,
+    "effects": ["향기", "인테리어 포인트"],
+    "description": "보라색 꽃과 향기가 매��적이지만 실내에서는 충분��� 직사광선이 필요합니다."
+  },
+  {
+    "id": "string-of-pearls",
+    "name": "녹영/진주줄",
+    "scientificName": "Senecio rowleyanus",
+    "sunlightNeed": "strong",
+    "difficulty": "medium",
+    "waterIntervalDays": 14,
+    "effects": ["인테리어 포인트"],
+    "description": "구슬 모양 잎이 줄줄이 달려 행잉 화분에 어울리는 다육식물입니다."
+  },
+  {
+    "id": "anthurium",
+    "name": "안스리움",
+    "scientificName": "Anthurium andraeanum",
+    "sunlightNeed": "medium",
+    "difficulty": "medium",
+    "waterIntervalDays": 5,
+    "effects": ["공기정화", "인테리어 포인트"],
+    "description": "광택 있는 빨간 꽃이 오래 피며 밝은 간접광에서 잘 자랍니다."
+  }
+]
