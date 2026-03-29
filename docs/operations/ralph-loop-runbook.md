@@ -28,6 +28,8 @@ Recommended inputs:
 - `.ralph/inputs/Screen Flow.md`
 - `.ralph/inputs/Testing Strategy.md`
 
+See `.ralph/inputs/README.md` for the repository-local input staging rule.
+
 The live run should prefer these repo-local copies over documents stored in other repositories.
 
 ## Required Runtime Files
@@ -37,6 +39,8 @@ The autonomous run should maintain these files inside `.ralph/`:
 - `state.json`: current story, subtask, status, retry count, last heartbeat
 - `progress.md`: append-only progress log
 - `failures.md`: exact failure reasons and retry evidence
+
+Executable runtime helpers such as `scripts/ralph-run.sh`, `scripts/ralph-watchdog.sh`, and any `launchd` plist should be reviewed separately before being committed.
 
 ## Recommended State Contract
 

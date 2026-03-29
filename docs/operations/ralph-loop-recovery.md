@@ -40,6 +40,7 @@ Cause:
 Action:
 - Copy the needed document into `.ralph/inputs/`.
 - Resume using the repo-local copy.
+- Keep the recovery note in `.ralph/failures.md` so the next run does not repeat the same external read.
 
 ### 3. The requested agent was unavailable
 
@@ -87,3 +88,7 @@ Do not restart the whole project unless the repository state is clearly corrupte
 ## Logging Rule
 
 Every recovery action should append one short note to `.ralph/progress.md` or `.ralph/failures.md` so the next recovery attempt has better evidence.
+
+## Review Boundary
+
+If the recovery requires changing runtime prompts, watchdog scripts, or machine-specific launchd files, review those operational files separately before committing them.
