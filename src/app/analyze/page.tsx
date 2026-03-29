@@ -51,21 +51,59 @@ export default function AnalyzePage() {
     setLoadingAddress(false);
   }, []);
 
+  // Photo analysis state
+  const [analyzingPhoto, setAnalyzingPhoto] = useState(false);
+
+  // Analyze uploaded photos via API
+  const analyzePhotos = useCallback(async (imageDataUrls: string[]) => {
+    if (imageDataUrls.length === 0) return;
+    setAnalyzingPhoto(true);
+    try {
+      const res = await fetch('/api/analyze/photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images: imageDataUrls }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.windows && data.windows.length > 0) {
+          setAiDirection(data.windows[0].direction as Direction);
+          setAnalyzingPhoto(false);
+          return;
+        }
+      }
+      // API failed or no windows detected → show manual direction picker
+      setShowDirectionPicker(true);
+    } catch {
+      // photo analysis failure → show manual direction picker as fallback
+      setShowDirectionPicker(true);
+    }
+    setAnalyzingPhoto(false);
+  }, []);
+
   // Photo upload
   const handleFileUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []);
     const remaining = 5 - images.length;
     const toProcess = files.slice(0, remaining);
 
+    const newImages: string[] = [];
+    let processed = 0;
+
     for (const file of toProcess) {
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
+        newImages.push(result);
         setImages((prev) => [...prev, result]);
+        processed++;
+        if (processed === toProcess.length) {
+          analyzePhotos([...images, ...newImages]);
+        }
       };
       reader.readAsDataURL(file);
     }
-  }, [images.length]);
+  }, [images, analyzePhotos]);
 
   // Submit analysis
   const handleSubmit = async () => {
@@ -214,6 +252,13 @@ export default function AnalyzePage() {
                   +
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Photo analyzing indicator */}
+          {analyzingPhoto && (
+            <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
+              <p className="text-sm text-blue-700">사진을 분석하고 있어요...</p>
             </div>
           )}
 
