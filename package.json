@@ -22,6 +22,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-konva": "^19.2.3",
+    "slides-grab": "^1.2.0",
     "suncalc": "^1.9.0",
     "tailwindcss": "^4.2.2"
   },
